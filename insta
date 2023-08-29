@@ -1,0 +1,58 @@
+sudo apt update
+sudo apt install java -y
+java --version
+wget https://dlcdn.apache.org/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.tar.gz  <<copy url from maven website>>
+ls
+tar -xvf apache-maven-3.9.1-bin.tar.gz
+ls
+sudo mkdir maven
+cd /etc/opt/
+ls
+sudo su
+cd /home/ubuntu/
+mv apache-maven-3.9.1 /etc/opt/maven/
+ls
+cd apache-maven-3.9.1/
+pwd <copy path>
+which java
+file $(which java)
+file /etc/alternatives/java
+cd ..
+ls
+pwd
+ls -a
+vi .bashrc
+edit bashrc file and add below path
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
+PATH=$JAVA_HOME/bin:PATH
+export PATH
+
+export M2_HOME ="/etc/opt/maven/apache-maven-3.9.4"
+export M2=$M2_HOME/bin
+export PATH=$M2:$PATH
+
+source .bashrc
+mvn --version
+git --version
+ls
+cd git/
+sudo yum install git -y
+mkdir git
+cd git
+git clone https://github.com/sudhakarbastawade2303/spring-boot-war-example.git
+ls
+cd spring-boot-war-example
+ls
+sudo yum install tree -y
+tree
+mvn clean package <build source code>
+mvn install
+mvn dependency:purge-local-repository
+java --version
+ls
+mvn test
+cd ../..
+exit
+======
+
+
