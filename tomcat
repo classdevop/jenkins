@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    tools {
+        maven 'M2_HOME'
+        }
+    stages {
+        stage('SCM chekout'){
+            steps {
+                checkout([$class:'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/classdevop/spring-boot-war-example.git']]])
+            }
+        }
+	    stage('test'){
+	        steps{
+		        sh 'mvn test'
+                }
+            }
+    stage('build'){
+        steps{
+            sh 'mvn package'
+            }
+        }
+        stage('deploy on dev-env'){
+            steps{
+                deploy adapters: [tomcat9(credentialsId: 'tomcat9-server', path: '', url: 'http://35.154.195.7:8080/')], contextPath: '/app', war: '**/*.war'
+            }
+        }
+        stage('deploy on QA'){
+            input {
+                message 'should we ontinue?'
+                ok 'yes we should'
+            }
+        steps{
+            deploy adapters: [tomcat9(credentialsId: 'tomcat9-server', path: '', url: 'http://35.154.195.7:8080/')], contextPath: '/app', war: '**/*.war'
+            }
+        }
+    }
+    post{
+        always{
+        echo "=======always======="
+        }
+        success{
+        echo "=======pipeline executed successfully======="
+            emailext body: 'job success', recipientProviders: [developers()], subject: 'jenkins-pipeline', to: 'classdevops253@gmail.com'
+        }
+        
+    }
+}

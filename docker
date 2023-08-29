@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    tools {
+        maven 'M2_HOME'
+    }
+    stages {
+        stage('pull source code'){
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/sudhakarbastawade2303/spring-boot-war-example.git']]])
+                sh 'mvn clean package'
+            }
+        }
+        stage('Build docker image'){
+            steps{
+                script{
+                    sh 'docker build -t sudhakarbastawade/hi:latest .'
+                }
+            }
+        }
+        stage('Push image to Hub'){
+            steps{
+                script{
+                   withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhubpwd')]) {
+                   sh 'docker login -u sudhakarbastawade -p ${dockerhubpwd}'
+ 
+                }
+                   sh 'docker push sudhakarbastawade/hi:latest'
+                }
+            }
+        }
+    }
+}
